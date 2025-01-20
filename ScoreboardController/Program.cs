@@ -5,6 +5,7 @@ using System.Windows;
 using Scoreboard.Data;
 using ScoreboardController.Data;
 using ScoreboardController.Helpers;
+using ScoreboardController.Repositories;
 using ScoreboardController.Views;
 using ScoreboardController.Services;
 using ScoreboardController.ViewModels;
@@ -34,11 +35,10 @@ namespace ScoreboardController
                     services.AddSingleton<TupleConverter>();
                     // 3) Register MainWindow
                     services.AddSingleton<MainWindow>();
-                    services.AddSingleton<ICommandMappingService, MockCommandMappingService>();
+                    services.AddSingleton<ICommandMappingRepository, MockCommandMappingRepository>();
+                    services.AddSingleton<ICommandMappingService, CommandMappingService>();
                     services.AddSingleton<ISoftKeyRepository, MockSoftKeyRepository>();
                     services.AddSingleton<ITimerService, PrecisionTimerService>();
-
-
                 })
                 .Build();
 

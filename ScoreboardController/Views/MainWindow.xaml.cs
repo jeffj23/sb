@@ -29,7 +29,6 @@ namespace ScoreboardController.Views
 
             _viewModel = viewModel;
             DataContext = _viewModel;
-            _commandMappingService = new MockCommandMappingService();
             
             //InitializeSoftKeys();
             _messenger = messenger;

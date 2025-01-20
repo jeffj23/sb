@@ -114,7 +114,7 @@ namespace ScoreboardController.ViewModels
 
                     try
                     {
-                        var mapping = _commandMappingService.GetMapping(actionName);
+                        var mapping = _commandMappingService.GetMapping(actionName, false);
 
                         if (!mapping.PromptText.IsNullOrEmpty())
                         {
