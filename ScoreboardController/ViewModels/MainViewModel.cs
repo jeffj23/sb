@@ -13,6 +13,8 @@ using ScoreboardController.Models;
 using ScoreboardController.Services;
 using ScoreboardController.Views;
 using System.Collections.ObjectModel;
+using ScoreboardController.Data;
+using ScoreboardController.Repositories;
 
 namespace ScoreboardController.ViewModels
 {
@@ -27,10 +29,10 @@ namespace ScoreboardController.ViewModels
         private PromptService _promptService;
         private Dictionary<string, IScoreboardElementController> _controllers
             = new Dictionary<string, IScoreboardElementController>();
-        private readonly ISoftKeyRepository _softKeyRepository;
+        private readonly ISoftKeyService _softKeyService;
 
-        private ObservableCollection<SoftKeyDefinition> _softKeys;
-        public ObservableCollection<SoftKeyDefinition> SoftKeys
+        private ObservableCollection<SoftKey> _softKeys;
+        public ObservableCollection<SoftKey> SoftKeys
         {
             get => _softKeys;
             set
@@ -40,15 +42,15 @@ namespace ScoreboardController.ViewModels
             }
         }
 
-        public MainViewModel(TupleConverter converter, ICommandMappingService commandMappingService, ISoftKeyRepository softKeyRepository)
+        public MainViewModel(TupleConverter converter, ICommandMappingService commandMappingService, ISoftKeyService softKeyService)
         {
             CommandButtonClick = new RelayCommand(HandleCommandButtonClick);
             _converter = converter;
             _commandMappingService = commandMappingService;
             _controllers = new Dictionary<string, IScoreboardElementController>();
-            _softKeyRepository = softKeyRepository;
+            _softKeyService = softKeyService;
 
-            SoftKeys = new ObservableCollection<SoftKeyDefinition>(_softKeyRepository.GetSoftKeys());
+            SoftKeys = new ObservableCollection<SoftKey>(_softKeyService.LoadSoftKeysForSet(1));
             Console.WriteLine($"Loaded {SoftKeys.Count} softkeys.");
             InitializeSoftKeys();
         }
@@ -76,18 +78,7 @@ namespace ScoreboardController.ViewModels
 
         private void InitializeSoftKeys()
         {
-            // Populate softkey definitions
-            SoftKeys = new ObservableCollection<SoftKeyDefinition>();
-
-            for (int i = 0; i < 40; i++)
-            {
-                SoftKeys.Add(new SoftKeyDefinition
-                {
-                    Content = $"Key {(i <= 9 ? "0" : "")}{i + 1}",
-                    Tag = $"SoftKey{(i <= 9 ? "0" : "")}{i + 1}",
-                    Command = new RelayCommand(o => HandleSoftKeyClick(o))
-                });
-            }
+            //TODO: set up keys
         }
 
         private void HandleSoftKeyClick(object? parameter)
@@ -224,43 +215,4 @@ namespace ScoreboardController.ViewModels
         }
 
     }
-
-
-
-
-
-    public interface ISoftKeyRepository
-    {
-        List<SoftKeyDefinition> GetSoftKeys();
-    }
-
-
-    public class MockSoftKeyRepository : ISoftKeyRepository
-    {
-        public List<SoftKeyDefinition> GetSoftKeys()
-        {
-            var softKeys = new List<SoftKeyDefinition>();
-
-            for (int i = 0; i < 40; i++)
-            {
-                softKeys.Add(new SoftKeyDefinition
-                {
-                    Content = $"SoftKey {i}",
-                    Tag = $"SoftKey{i}",
-                    Command = new RelayCommand(parameter => HandleSoftKeyClick(parameter))
-                });
-            }
-
-            return softKeys;
-        }
-
-        private void HandleSoftKeyClick(object? parameter)
-        {
-            if (parameter is string tag)
-            {
-                Console.WriteLine($"SoftKey clicked: {tag}");
-            }
-        }
-    }
-
 }

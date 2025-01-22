@@ -30,7 +30,6 @@ namespace ScoreboardController.Views
             _viewModel = viewModel;
             DataContext = _viewModel;
             
-            //InitializeSoftKeys();
             _messenger = messenger;
             _sharedTimerService = timerService;
             _promptService = new PromptService(InputPromptPanel, PromptTextBlock, UserInputTextBlock);
@@ -38,11 +37,8 @@ namespace ScoreboardController.Views
 
             _viewModel.SetPromptService(_promptService);
 
-            // 1) Load or stub scoreboard elements (Name, Type). 
-            //    e.g., from DB => ScoreboardElements table
             var elements = _viewModel.LoadScoreboardElements();
 
-            // 2) Create controllers via factory and store in _controllers
             foreach (var elem in elements)
             {
                 IScoreboardElementController controller = ScoreboardControllerFactory.CreateController(
@@ -53,8 +49,6 @@ namespace ScoreboardController.Views
 
                 controller.OnMessage += (json) =>
                 {
-                    // Log or send JSON out to scoreboard (via socket, etc.)
-                    // For demonstration, let's just debug-print:
                     System.Diagnostics.Debug.WriteLine($"SEND JSON => {json}");
                 };
 
