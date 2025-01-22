@@ -112,17 +112,66 @@ namespace Scoreboard
                 Margin = new Thickness(2)
             };
 
+            var p1 = new Bulb
+            {
+                Diameter = BulbSize,
+                OnColor = BulbOnColor,
+                OffColor = BulbOffColor,
+                Margin = new Thickness(2),
+                Visibility = Visibility.Hidden
+            };
+            var p2 = new Bulb
+            {
+                Diameter = BulbSize,
+                OnColor = BulbOnColor,
+                OffColor = BulbOffColor,
+                Margin = new Thickness(2),
+                Visibility = Visibility.Hidden
+            };
+            var p3 = new Bulb
+            {
+                Diameter = BulbSize,
+                OnColor = BulbOnColor,
+                OffColor = BulbOffColor,
+                Margin = new Thickness(2),
+                Visibility = Visibility.Hidden
+            };
+            var p4 = new Bulb
+            {
+                Diameter = BulbSize,
+                OnColor = BulbOnColor,
+                OffColor = BulbOffColor,
+                Margin = new Thickness(2),
+                Visibility = Visibility.Hidden
+            };
+
             // Place them in column 10, rows 1 and 5
+            Grid.SetColumn(p1, 10);
+            Grid.SetRow(p1, 0);
+
             Grid.SetColumn(_colonTop, 10);
             Grid.SetRow(_colonTop, 1);
-            
+
+            Grid.SetColumn(p2, 10);
+            Grid.SetRow(p2, 2);
+
+            Grid.SetColumn(p3, 10);
+            Grid.SetRow(p3, 3);
+
+            Grid.SetColumn(p4, 10);
+            Grid.SetRow(p4, 4);
+
             Grid.SetColumn(_colonBottom, 10);
             Grid.SetRow(_colonBottom, 5);
             
             Grid.SetColumn(_period, 10);
             Grid.SetRow(_period, 6);
 
+            _layoutGrid.Children.Add(p1);
             _layoutGrid.Children.Add(_colonTop);
+            _layoutGrid.Children.Add(p2);
+            _layoutGrid.Children.Add(p3);
+            _layoutGrid.Children.Add(p4);
             _layoutGrid.Children.Add(_colonBottom);
             _layoutGrid.Children.Add(_period);
 
