@@ -2,9 +2,10 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Scoreboard.Elements.BaseElements;
 using Scoreboard.Models;
 
-namespace Scoreboard
+namespace Scoreboard.Elements
 {
     public class CounterElement : ScoreboardElement
     {

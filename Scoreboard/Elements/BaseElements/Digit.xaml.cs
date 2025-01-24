@@ -1,11 +1,10 @@
 ﻿using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Scoreboard.Templates.DigitSets;
 
-namespace Scoreboard
+namespace Scoreboard.Elements.BaseElements
 {
     public partial class Digit : UserControl
     {

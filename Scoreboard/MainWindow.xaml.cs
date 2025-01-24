@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
+using Scoreboard.Elements;
 
 namespace Scoreboard
 {
@@ -63,6 +64,16 @@ namespace Scoreboard
                     dispatcher.RegisterElement(counter);
                     MainGrid.Children.Add(counter);
                 }
+                else if (elemModel.ElementType.Equals("VariableMsg", StringComparison.OrdinalIgnoreCase))
+                {
+                    var messageElement = new VariableMessageElement(elemModel);
+
+                    Canvas.SetLeft(messageElement, messageElement.CalculateX(MainGrid.ActualWidth)); // Use ActualWidth here
+                    Canvas.SetTop(messageElement, messageElement.Y);
+
+                    dispatcher.RegisterElement(messageElement);
+                    MainGrid.Children.Add(messageElement);
+                }
                 else
                 {
                     // Handle other types (e.g., "Text", "Matrix") if needed
@@ -70,6 +81,7 @@ namespace Scoreboard
             }
 
             DrawAlignmentLines();
+            dispatcher.DispatchMessage("HomeTeamName", "set,UCOA ACADEMY");
         }
 
         /// <summary>
