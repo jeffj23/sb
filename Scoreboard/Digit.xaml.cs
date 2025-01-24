@@ -18,6 +18,17 @@ namespace Scoreboard
         private int _value;
         private readonly Dictionary<int, int[,]> _activeDigitSet;
 
+        public double Width
+        {
+            get
+            {
+                // Total width is the sum of all bulbs and margins
+                double bulbSpacing = 2 * Cols * 2; // Margin * 2 (left + right) * number of columns
+                double bulbWidth = BulbSize * Cols; // Total bulb width
+                return bulbWidth + bulbSpacing; // Add bulbs + margins
+            }
+        }
+
         public Digit()
         {
             InitializeComponent();

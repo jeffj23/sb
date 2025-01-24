@@ -4,7 +4,7 @@
         xmlns:views="clr-namespace:ScoreboardController.Views"
         Title="Scoreboard Controller"
         WindowState="Maximized"
-        WindowStyle="None"
+        WindowStyle="SingleBorderWindow"
         Background="#333">
 
     <Window.Resources>

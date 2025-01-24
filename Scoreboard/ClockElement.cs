@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Scoreboard.Models;
 
 namespace Scoreboard
 {
@@ -20,12 +21,7 @@ namespace Scoreboard
         private Bulb _colonBottom;
         private Bulb _period;
 
-        public ClockElement(
-            string elementName,
-            double bulbSize,
-            Brush bulbOnColor,
-            Brush bulbOffColor)
-            : base(elementName, bulbSize, bulbOnColor, bulbOffColor)
+        public ClockElement(ScoreboardElementModel model) : base(model)
         {
             InitializeLayout();
         }
@@ -68,7 +64,7 @@ namespace Scoreboard
                 // Set fixed width = BulbSize for the spacing columns
                 if (c == 4 || c == 9 || c == 11 || c == 16)
                 {
-                    colDef.Width = new GridLength(BulbSize);
+                    colDef.Width = new GridLength(Model.BulbSize);
                 }
                 else
                 {
@@ -92,55 +88,55 @@ namespace Scoreboard
             // Create the colon bulbs (same diameter as digit bulbs)
             _colonTop = new Bulb
             {
-                Diameter = BulbSize,
-                OnColor = BulbOnColor,
-                OffColor = BulbOffColor,
+                Diameter = Model.BulbSize,
+                OnColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Model.BulbOnColor)),
+                OffColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Model.BulbOffColor)),
                 Margin = new Thickness(2)
             };
             _colonBottom = new Bulb
             {
-                Diameter = BulbSize,
-                OnColor = BulbOnColor,
-                OffColor = BulbOffColor,
+                Diameter = Model.BulbSize,
+                OnColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Model.BulbOnColor)),
+                OffColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Model.BulbOffColor)),
                 Margin = new Thickness(2)
             };
             _period = new Bulb
             {
-                Diameter = BulbSize,
-                OnColor = BulbOnColor,
-                OffColor = BulbOffColor,
+                Diameter = Model.BulbSize,
+                OnColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Model.BulbOnColor)),
+                OffColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Model.BulbOffColor)),
                 Margin = new Thickness(2)
             };
 
             var p1 = new Bulb
             {
-                Diameter = BulbSize,
-                OnColor = BulbOnColor,
-                OffColor = BulbOffColor,
+                Diameter = Model.BulbSize,
+                OnColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Model.BulbOnColor)),
+                OffColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Model.BulbOffColor)),
                 Margin = new Thickness(2),
                 Visibility = Visibility.Hidden
             };
             var p2 = new Bulb
             {
-                Diameter = BulbSize,
-                OnColor = BulbOnColor,
-                OffColor = BulbOffColor,
+                Diameter = Model.BulbSize,
+                OnColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Model.BulbOnColor)),
+                OffColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Model.BulbOffColor)),
                 Margin = new Thickness(2),
                 Visibility = Visibility.Hidden
             };
             var p3 = new Bulb
             {
-                Diameter = BulbSize,
-                OnColor = BulbOnColor,
-                OffColor = BulbOffColor,
+                Diameter = Model.BulbSize,
+                OnColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Model.BulbOnColor)),
+                OffColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Model.BulbOffColor)),
                 Margin = new Thickness(2),
                 Visibility = Visibility.Hidden
             };
             var p4 = new Bulb
             {
-                Diameter = BulbSize,
-                OnColor = BulbOnColor,
-                OffColor = BulbOffColor,
+                Diameter = Model.BulbSize,
+                OnColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Model.BulbOnColor)),
+                OffColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Model.BulbOffColor)),
                 Margin = new Thickness(2),
                 Visibility = Visibility.Hidden
             };
@@ -184,9 +180,9 @@ namespace Scoreboard
         {
             var digit = new Digit
             {
-                BulbSize = BulbSize,
-                BulbOnColor = BulbOnColor,
-                BulbOffColor = BulbOffColor,
+                BulbSize = Model.BulbSize,
+                BulbOnColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Model.BulbOnColor)),
+                BulbOffColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Model.BulbOffColor)),
                 Margin = new Thickness(2)
             };
 

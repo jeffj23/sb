@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Shapes;
 
 namespace Scoreboard
 {
@@ -15,11 +16,22 @@ namespace Scoreboard
             InitializeComponent();
             _context = context;
 
-            var elements = _context.ScoreboardElements.ToList();
             var dispatcher = new MessageDispatcher();
 
             var server = new WebSocketServer("http://localhost:5000/", dispatcher);
             Task.Run(() => server.StartAsync());
+
+            // Hook up the Loaded event
+            Loaded += (s, e) => InitializeScoreboardElements(dispatcher);
+        }
+
+        /// <summary>
+        /// Initializes the Scoreboard Elements
+        /// </summary>
+        /// <param name="dispatcher"></param>
+        private void InitializeScoreboardElements(MessageDispatcher dispatcher)
+        {
+            var elements = _context.ScoreboardElements.ToList();
 
             // Construct UI elements
             foreach (var elemModel in elements)
@@ -28,52 +40,36 @@ namespace Scoreboard
                 Brush onColor = ParseColor(elemModel.BulbOnColor);
                 Brush offColor = ParseColor(elemModel.BulbOffColor);
 
-                // We'll handle either a "Clock" or a "Counter" type
+                // Handle either a "Clock" or a "Counter" type
                 if (elemModel.ElementType.Equals("Clock", StringComparison.OrdinalIgnoreCase))
                 {
                     // Create a ClockElement
-                    // If you want 3 or 4 digits, you can pass that or read from elemModel.NumDigits
-                    var clock = new ClockElement(
-                        elementName: elemModel.ElementName,
-                        bulbSize: elemModel.BulbSize,
-                        bulbOnColor: onColor,
-                        bulbOffColor: offColor
-                    );
+                    var clock = new ClockElement(elemModel);
 
+                    // Position the clock on the Canvas
+                    Canvas.SetLeft(clock, clock.CalculateX(MainGrid.ActualWidth)); // Use ActualWidth here
+                    Canvas.SetTop(clock, clock.Y);
 
-
-                    // Position the clock. If using a Grid, you might rely on row/column definitions.
-                    // If using absolute positioning on a Canvas:
-                     Canvas.SetLeft(clock, elemModel.PosX);
-                     Canvas.SetTop(clock, elemModel.PosY);
-                    // myCanvas.Children.Add(clock);
-
-                    // For now, we’ll just add it to MainGrid
                     dispatcher.RegisterElement(clock);
                     MainGrid.Children.Add(clock);
                 }
                 else if (elemModel.ElementType.Equals("Counter", StringComparison.OrdinalIgnoreCase))
                 {
-                    var counter = new CounterElement(
-                        elementName: elemModel.ElementName,
-                        numDigits: elemModel.NumDigits,
-                        bulbSize: elemModel.BulbSize,
-                        bulbOnColor: onColor,
-                        bulbOffColor: offColor
-                    );
+                    var counter = new CounterElement(elemModel);
 
-                    Canvas.SetLeft(counter, elemModel.PosX);
-                    Canvas.SetTop(counter, elemModel.PosY);
+                    Canvas.SetLeft(counter, counter.CalculateX(MainGrid.ActualWidth)); // Use ActualWidth here
+                    Canvas.SetTop(counter, counter.Y);
 
                     dispatcher.RegisterElement(counter);
                     MainGrid.Children.Add(counter);
                 }
                 else
                 {
-                    // Potential future element types, e.g. "Text", "Matrix"
-                    // For now, do nothing or log a warning
+                    // Handle other types (e.g., "Text", "Matrix") if needed
                 }
             }
+
+            DrawAlignmentLines();
         }
 
         /// <summary>
@@ -97,5 +93,64 @@ namespace Scoreboard
                 return Brushes.White;
             }
         }
-    }
+
+        private void DrawAlignmentLines()
+        {
+            // Clear any existing lines
+            var existingLines = MainGrid.Children.OfType<Line>().ToList();
+            foreach (var line in existingLines)
+            {
+                MainGrid.Children.Remove(line);
+            }
+
+            // Get canvas dimensions
+            double canvasWidth = MainGrid.ActualWidth;
+            double canvasHeight = MainGrid.ActualHeight;
+
+            // Ensure canvas dimensions are valid
+            if (canvasWidth <= 0 || canvasHeight <= 0)
+            {
+                return; // Avoid drawing lines if the canvas hasn't rendered yet
+            }
+
+            // Calculate percentages
+            double[] percentages = { 0.25, 0.50, 0.75 };
+
+            foreach (var percentage in percentages)
+            {
+                // Create vertical line
+                var verticalLine = new Line
+                {
+                    X1 = canvasWidth * percentage,
+                    Y1 = 0,
+                    X2 = canvasWidth * percentage,
+                    Y2 = canvasHeight,
+                    Stroke = Brushes.LightGray, // Light gray for subtle alignment
+                    StrokeThickness = 1,
+                    StrokeDashArray = new DoubleCollection { 2, 2 } // Dashed line
+                };
+
+                // Create horizontal line
+                var horizontalLine = new Line
+                {
+                    X1 = 0,
+                    Y1 = canvasHeight * percentage,
+                    X2 = canvasWidth,
+                    Y2 = canvasHeight * percentage,
+                    Stroke = Brushes.LightGray,
+                    StrokeThickness = 1,
+                    StrokeDashArray = new DoubleCollection { 2, 2 }
+                };
+
+                // Add lines to canvas
+                MainGrid.Children.Add(verticalLine);
+                MainGrid.Children.Add(horizontalLine);
+
+                // Ensure the lines are behind other elements
+                Canvas.SetZIndex(verticalLine, -1);
+                Canvas.SetZIndex(horizontalLine, -1);
+            }
+        }
+
+}
 }

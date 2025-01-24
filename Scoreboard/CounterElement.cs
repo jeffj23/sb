@@ -1,52 +1,73 @@
 ﻿using System.Diagnostics;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Scoreboard.Models;
 
 namespace Scoreboard
 {
     public class CounterElement : ScoreboardElement
     {
         private int _numDigits;
-        private StackPanel _digitsStack;
+        private Grid _layoutGrid;
         private Digit[] _digitControls;
 
-        public CounterElement(
-            string elementName,
-            int numDigits,
-            double bulbSize,
-            Brush bulbOnColor,
-            Brush bulbOffColor)
-            : base(elementName, bulbSize, bulbOnColor, bulbOffColor)
+        public CounterElement(ScoreboardElementModel model) : base(model)
         {
-            _numDigits = numDigits;
+            _numDigits = model.NumDigits;
             InitializeCounterLayout();
         }
 
         private void InitializeCounterLayout()
         {
-            _digitsStack = new StackPanel
+            // Create a Grid for the layout
+            _layoutGrid = new Grid
             {
-                Orientation = Orientation.Horizontal,
-                HorizontalAlignment = System.Windows.HorizontalAlignment.Center,
-                VerticalAlignment = System.Windows.VerticalAlignment.Center
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
             };
 
+            // Add rows for the digits
+            for (int r = 0; r < 7; r++) // Assuming 7 rows for digit height
+            {
+                _layoutGrid.RowDefinitions.Add(new RowDefinition
+                {
+                    Height = GridLength.Auto
+                });
+            }
+
+            // Add columns for digits and spacing
+            for (int c = 0; c < (_numDigits * 2) - 1; c++)
+            {
+                _layoutGrid.ColumnDefinitions.Add(new ColumnDefinition
+                {
+                    Width = (c % 2 == 0) ? GridLength.Auto : new GridLength(Model.BulbSize) // Spacing for odd columns
+                });
+            }
+
             _digitControls = new Digit[_numDigits];
+
+            // Create and position the digits
             for (int i = 0; i < _numDigits; i++)
             {
                 var digit = new Digit
                 {
-                    BulbSize = BulbSize,
-                    BulbOnColor = BulbOnColor,
-                    BulbOffColor = BulbOffColor,
-                    Margin = new System.Windows.Thickness(2)
+                    BulbSize = Model.BulbSize,
+                    BulbOnColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Model.BulbOnColor)),
+                    BulbOffColor = new SolidColorBrush((Color)ColorConverter.ConvertFromString(Model.BulbOffColor)),
+                    Margin = new Thickness(2) // Optional
                 };
 
-                _digitsStack.Children.Add(digit);
+                Grid.SetRow(digit, 0); // Spanning all rows for a digit
+                Grid.SetRowSpan(digit, 7);
+                Grid.SetColumn(digit, i * 2); // Every second column
+
+                _layoutGrid.Children.Add(digit);
                 _digitControls[i] = digit;
             }
 
-            ContainerBorder.Child = _digitsStack;
+            // Set the grid as the child of the border container
+            ContainerBorder.Child = _layoutGrid;
         }
 
         public void SetValue(string value)
