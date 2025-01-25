@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Scoreboard.Data;
+using Scoreboard.Elements.BaseElements;
 
 namespace Scoreboard;
 
@@ -18,6 +19,7 @@ public static class Program
                     SqlServerDbContextOptionsExtensions.UseSqlServer(options, "Server=DESKTOP-CN7A5TA;Database=Score;Trusted_Connection=True;TrustServerCertificate=True;"));
 
                 services.AddSingleton<MainWindow>();
+                services.AddSingleton<SbPixelManager>();
             })
             .Build();
 

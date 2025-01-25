@@ -12,6 +12,7 @@ public abstract class ScoreboardElement : UserControl, IReceiveMessages
     internal readonly ScoreboardElementModel Model;
     public double Y => Model.PosY ?? 0;
     public string ElementName => Model.ElementName;
+    public readonly SbPixelManager PixelManager;
 
     /// <summary>
     /// The outer container that might show a border, rounded rectangle, etc.
@@ -19,20 +20,25 @@ public abstract class ScoreboardElement : UserControl, IReceiveMessages
     /// </summary>
     protected Border ContainerBorder { get; private set; }
 
-    public ScoreboardElement(ScoreboardElementModel model)
+    public ScoreboardElement(ScoreboardElementModel model, SbPixelManager pixelManager)
     {
         Model = model;
+        PixelManager = pixelManager;
+        Model.BorderWidth ??= 0;
+        Model.BorderHorizontalPadding ??= 10;
+        Model.BorderVerticalPadding ??= 10;
 
         // Create the container
-        ContainerBorder = new Border
-        {
-            Background = Brushes.Transparent, // or some style
-            BorderBrush = Brushes.White,      // or any color you want
-            BorderThickness = new Thickness(4),
-            CornerRadius = new CornerRadius(10), // rounded corners
-            Padding = new Thickness(10),
-            Margin = new Thickness(20, 10, 20, 10)
-        };
+        if (Model.BorderWidth != null)
+            ContainerBorder = new Border
+            {
+                Background = Brushes.Black, // or some style
+                BorderBrush = Brushes.White, // or any color you want
+                BorderThickness = new Thickness((double) Model.BorderWidth),
+                CornerRadius = new CornerRadius(10), // rounded corners
+                Padding = new Thickness((double)Model.BorderHorizontalPadding, (double)Model.BorderVerticalPadding, (double)Model.BorderHorizontalPadding, (double)Model.BorderVerticalPadding),
+                Margin = new Thickness(20, 10, 20, 10)
+            };
 
         // Put the border in the root of this UserControl
         Content = ContainerBorder;

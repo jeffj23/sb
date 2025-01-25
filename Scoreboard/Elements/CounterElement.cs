@@ -13,7 +13,7 @@ namespace Scoreboard.Elements
         private Grid _layoutGrid;
         private Digit[] _digitControls;
 
-        public CounterElement(ScoreboardElementModel model) : base(model)
+        public CounterElement(ScoreboardElementModel model, SbPixelManager pixelManager) : base(model, pixelManager)
         {
             _numDigits = model.NumDigits;
             InitializeCounterLayout();

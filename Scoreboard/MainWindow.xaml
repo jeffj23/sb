@@ -4,7 +4,7 @@
         xmlns:local="clr-namespace:Scoreboard"
         Title="Scoreboard" Height="600" Width="1000" WindowState="Maximized" WindowStyle="None"
         Background="Black">
-    <Canvas x:Name="MainGrid" Background="Black">
+    <Canvas x:Name="MainGrid" Background="#FF350101">
         <!-- We place elements programmatically -->
     </Canvas>
 </Window>

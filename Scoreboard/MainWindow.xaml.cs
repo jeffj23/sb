@@ -5,16 +5,19 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using Scoreboard.Elements;
+using Scoreboard.Elements.BaseElements;
 
 namespace Scoreboard
 {
     public partial class MainWindow : Window
     {
         private ScoreDbContext _context;
+        private readonly SbPixelManager _sbPixelManager;
 
-        public MainWindow(ScoreDbContext context)
+        public MainWindow(ScoreDbContext context, SbPixelManager pixelManager)
         {
             InitializeComponent();
+            _sbPixelManager = pixelManager;
             _context = context;
 
             var dispatcher = new MessageDispatcher();
@@ -45,7 +48,7 @@ namespace Scoreboard
                 if (elemModel.ElementType.Equals("Clock", StringComparison.OrdinalIgnoreCase))
                 {
                     // Create a ClockElement
-                    var clock = new ClockElement(elemModel);
+                    var clock = new ClockElement(elemModel, _sbPixelManager);
 
                     // Position the clock on the Canvas
                     Canvas.SetLeft(clock, clock.CalculateX(MainGrid.ActualWidth)); // Use ActualWidth here
@@ -56,7 +59,7 @@ namespace Scoreboard
                 }
                 else if (elemModel.ElementType.Equals("Counter", StringComparison.OrdinalIgnoreCase))
                 {
-                    var counter = new CounterElement(elemModel);
+                    var counter = new CounterElement(elemModel, _sbPixelManager);
 
                     Canvas.SetLeft(counter, counter.CalculateX(MainGrid.ActualWidth)); // Use ActualWidth here
                     Canvas.SetTop(counter, counter.Y);
@@ -66,7 +69,7 @@ namespace Scoreboard
                 }
                 else if (elemModel.ElementType.Equals("VariableMsg", StringComparison.OrdinalIgnoreCase))
                 {
-                    var messageElement = new VariableMessageElement(elemModel);
+                    var messageElement = new VariableMessageElement(elemModel, _sbPixelManager);
 
                     Canvas.SetLeft(messageElement, messageElement.CalculateX(MainGrid.ActualWidth)); // Use ActualWidth here
                     Canvas.SetTop(messageElement, messageElement.Y);
@@ -81,7 +84,8 @@ namespace Scoreboard
             }
 
             DrawAlignmentLines();
-            dispatcher.DispatchMessage("HomeTeamName", "set,UCOA ACADEMY");
+            dispatcher.DispatchMessage("HomeTeamName", "set,HOME");
+            dispatcher.DispatchMessage("GuestTeamName", "set,GUEST");
         }
 
         /// <summary>

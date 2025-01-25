@@ -16,6 +16,9 @@ namespace Scoreboard.Models
         public double? PosY { get; set; }
         public string? HorizontalAlignment { get; set; } // left, center, right
         public int? HorizontalOffset { get; set; }
+        public int? BorderWidth { get; set; }
+        public int? BorderVerticalPadding { get; set; }
+        public int? BorderHorizontalPadding { get; set; }
 
         // Navigation
         public ICollection<ScoreboardSetElementModel> SetElements { get; set; }
