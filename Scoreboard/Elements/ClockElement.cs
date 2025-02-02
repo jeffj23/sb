@@ -188,5 +188,17 @@ namespace Scoreboard.Elements
             Debug.WriteLine($"Message received in clock element: {value}");
             SetValue(value);
         }
+
+        protected override double CalculateElementWidth()
+        {
+            // Clock-specific width calculation
+            double digitWidth = Model.BulbSize * 4; // Width of one digit
+            double spacing = 32 * (Model.NumDigits - 1); // Spacing between digits
+            double colonSpacing = (Model.BulbSize + 4) * 3; // Colon spacing
+            double padding = ContainerBorder.Padding.Left + ContainerBorder.Padding.Right;
+            double borderThickness = ContainerBorder.BorderThickness.Left + ContainerBorder.BorderThickness.Right;
+
+            return (digitWidth * Model.NumDigits) + spacing + colonSpacing + padding + borderThickness;
+        }
     }
 }

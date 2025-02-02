@@ -12,6 +12,7 @@ namespace Scoreboard.Elements
         private int _numDigits;
         private Grid _layoutGrid;
         private Digit[] _digitControls;
+        private bool _useLeadingZeros = false;
 
         public CounterElement(ScoreboardElementModel model, SbPixelManager pixelManager) : base(model, pixelManager)
         {
@@ -73,18 +74,30 @@ namespace Scoreboard.Elements
 
         public void SetValue(string value)
         {
-            // Split the input by commas if present
-            var parts = value.Split(',');
+            // Ensure the input value is valid and doesn't exceed the maximum digit length
+            if (value.Length > _numDigits)
+            {
+                value = value.Substring(value.Length - _numDigits); // Trim to fit
+            }
 
+            // Pad the value with leading zeroes or blanks based on _useLeadingZeros
+            value = _useLeadingZeros
+                ? value.PadLeft(_numDigits, '0') // Pad with zeroes
+                : value.PadLeft(_numDigits, '-'); // Pad with blanks (or whatever character you use for blanks)
+
+            // Iterate through each digit and set its value
             for (int i = 0; i < _numDigits; i++)
             {
-                if (i < parts.Length)
+                if (i < value.Length)
                 {
-                    var part = parts[i].Trim();
+                    char part = value[i];
 
-                    if (int.TryParse(part, out int digitValue))
+                    if (part == '-') // Treat blanks as -1
                     {
-                        // Assuming that -1 indicates a blank digit
+                        _digitControls[i].SetValue(-1);
+                    }
+                    else if (int.TryParse(part.ToString(), out int digitValue))
+                    {
                         _digitControls[i].SetValue(digitValue);
                     }
                     else
@@ -101,10 +114,22 @@ namespace Scoreboard.Elements
             }
         }
 
+
         public override void ReceiveMessage(string value)
         {
             Debug.WriteLine($"Message received in counter element '{ElementName}': {value}");
             SetValue(value);
+        }
+
+        protected override double CalculateElementWidth()
+        {
+            // Counter-specific width calculation
+            double digitWidth = Model.BulbSize * 4; // Width of one digit
+            double spacing = 10 * (Model.NumDigits - 1); // Spacing between digits
+            double padding = ContainerBorder.Padding.Left + ContainerBorder.Padding.Right;
+            double borderThickness = ContainerBorder.BorderThickness.Left + ContainerBorder.BorderThickness.Right;
+
+            return (digitWidth * Model.NumDigits) + spacing + padding + borderThickness;
         }
     }
 }

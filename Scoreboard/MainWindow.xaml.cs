@@ -84,8 +84,8 @@ namespace Scoreboard
             }
 
             DrawAlignmentLines();
-            dispatcher.DispatchMessage("HomeTeamName", "set,HOME");
-            dispatcher.DispatchMessage("GuestTeamName", "set,GUEST");
+            dispatcher.DispatchMessage("HomeTeamName", "set,HOME TEAM");
+            dispatcher.DispatchMessage("GuestTeamName", "set,GUEST TEAM");
         }
 
         /// <summary>

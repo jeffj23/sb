@@ -47,21 +47,12 @@ public abstract class ScoreboardElement : UserControl, IReceiveMessages
                 $"Actual Element Size for {ElementName} is {ContainerBorder.Width} ({ContainerBorder.ActualWidth} actual)");
     }
 
-    /// <summary>
-    /// Called when a JSON message sets the value of this element.
-    /// e.g. { Element: "MainClock", Value: "20:00" }
-    /// The derived class will interpret the string appropriately.
-    /// </summary>
-    /// <param name="value">String value to be interpreted by the subclass</param>
-    public abstract void ReceiveMessage(string value);
-
     public double CalculateX(double canvasWidth)
     {
         double x = 0;
 
-        double totalElementWidth = ContainerBorder.ActualWidth > 0
-            ? ContainerBorder.ActualWidth
-            : CalculateElementWidth(Model.ElementType.ToUpperInvariant() == "CLOCK"); // Fallback to calculated width if not yet rendered
+        // Use the abstract method to calculate width
+        double totalElementWidth = CalculateElementWidth();
 
         switch (Model.HorizontalAlignment?.ToUpperInvariant() ?? "NONE")
         {
@@ -70,11 +61,11 @@ public abstract class ScoreboardElement : UserControl, IReceiveMessages
                 break;
 
             case "CENTER":
-                x = (canvasWidth - totalElementWidth) / 2;
+                x = (canvasWidth - totalElementWidth) / 2 + (Model.HorizontalOffset ?? 0); // Center with offset
                 break;
 
             case "RIGHT":
-                x = canvasWidth - totalElementWidth - (Model.HorizontalOffset ?? 0);
+                x = canvasWidth - totalElementWidth - (Model.HorizontalOffset ?? 0); // Offset from the right edge
                 break;
 
             default:
@@ -85,32 +76,7 @@ public abstract class ScoreboardElement : UserControl, IReceiveMessages
         return x;
     }
 
-    // Method to calculate the total width of the element
-    private double CalculateElementWidth(bool isClockWithColon)
-    {
-        if (Model.NumDigits <= 0) return 0;
+    protected abstract double CalculateElementWidth();
 
-        // Create a temporary Digit instance to get the width
-        var tempDigit = new Digit { BulbSize = Model.BulbSize };
-
-        // Total width = Digit width * number of digits + spacing between digits
-        double digitWidth = tempDigit.Width;
-
-        // Add spacing (e.g., 10px between digits)
-        double spacing = 32 * (Model.NumDigits - 1);
-
-        // Add ContainerBorder padding (left + right)
-        double margin = ContainerBorder.Margin.Left + ContainerBorder.Margin.Right;
-        double padding = ContainerBorder.Padding.Left + ContainerBorder.Padding.Right;
-
-        // Add ContainerBorder thickness (left + right)
-        double borderThickness = ContainerBorder.BorderThickness.Left + ContainerBorder.BorderThickness.Right;
-
-        // If there is a colon, take that into consideration
-        var colonSpacing = (isClockWithColon) ? ((Model.BulbSize + 4) * 3) : 0;
-
-        var totalWidth = (digitWidth * Model.NumDigits) + spacing + 0 + 0 + 0 + colonSpacing;
-        // Total width
-        return totalWidth;
-    }
+    public abstract void ReceiveMessage(string value);
 }

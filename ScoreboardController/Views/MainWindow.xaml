@@ -70,6 +70,7 @@
                BasedOn="{StaticResource BaseButtonStyle}">
             <Setter Property="FontSize" Value="18"/>
             <Setter Property="BorderThickness" Value="4"/>
+            <EventSetter Event="Click" Handler="SoftKey_Click"></EventSetter>
             <Setter Property="BorderBrush" Value="White"/>
         </Style>
 
@@ -457,7 +458,8 @@
                                 CommandParameter="{Binding Tag}" 
                                 Background="{Binding BackgroundColor}" 
                                 Foreground="{Binding TextColor}"
-                                Visibility="{Binding Visibility}" />
+                                Visibility="{Binding Visibility}"
+                                Tag="{Binding Tag}"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

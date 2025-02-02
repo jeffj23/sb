@@ -107,8 +107,11 @@ namespace ScoreboardController.Views
         {
             if (sender is Button btn)
             {
-                var tag = btn.Tag?.ToString(); // e.g., "SoftKey01"
-                MessageBox.Show($"You pressed {tag}");
+                var tag = btn.Tag?.ToString();
+                if (tag is not null)
+                {
+                    _viewModel.HandleSoftKeyClick(tag);
+                }
             }
         }
 

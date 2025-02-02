@@ -157,7 +157,7 @@ namespace Scoreboard.Elements
             }
         }
 
-        public double CalculateElementWidth()
+        protected override double CalculateElementWidth()
         {
             // Total width = 7 columns per letter + 1 spacing column between letters
             return _numLetters * (7 * Model.BulbSize) + ((_numLetters - 1) * Model.BulbSize);

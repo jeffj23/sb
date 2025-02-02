@@ -50,7 +50,10 @@ namespace ScoreboardController.ViewModels
             _controllers = new Dictionary<string, IScoreboardElementController>();
             _softKeyService = softKeyService;
 
-            SoftKeys = new ObservableCollection<SoftKey>(_softKeyService.LoadSoftKeysForSet(1));
+            _softKeyService.LoadSoftKeysForSet(1);
+            SoftKeys = _softKeyService.SoftKeys;
+            
+
             Console.WriteLine($"Loaded {SoftKeys.Count} softkeys.");
             InitializeSoftKeys();
         }
@@ -79,15 +82,6 @@ namespace ScoreboardController.ViewModels
         private void InitializeSoftKeys()
         {
             //TODO: set up keys
-        }
-
-        private void HandleSoftKeyClick(object? parameter)
-        {
-            if (parameter is string tag)
-            {
-                // Example logic for softkey click handling
-                System.Diagnostics.Debug.WriteLine($"SoftKey clicked: {tag}");
-            }
         }
 
         public void HandleCommandButtonClick(object parameters)
@@ -145,6 +139,26 @@ namespace ScoreboardController.ViewModels
             }
         }
 
+        public void HandleSoftKeyClick(string key)
+        {
+            var softKey = SoftKeys.FirstOrDefault(s => s.Tag == key);
+            // if the softkey value is one character, add two spaces before it, if it's two characters, add one space before it.
+            // this will justify the letters properly
+            
+
+
+            var command = new ScoreboardCommand
+            {
+                ElementName = softKey.Element, 
+                CommandType = Enum.Parse<CommandType>(softKey.CommandType.PadLeft(3)),
+                Value = softKey.Value
+            };
+            if (_controllers.TryGetValue(softKey.Element, out var controller))
+            {
+                controller.ProcessCommand(command);
+            }
+        }
+
         public List<TextBlockDefinition> LoadTextBlockDefinitions()
         {
             return new List<TextBlockDefinition>
@@ -187,7 +201,87 @@ namespace ScoreboardController.ViewModels
                     TextAlignment = "Center",
                     DefaultText = "0",
                     LabelOrientation = "Horizontal"
-                }
+                },
+                new TextBlockDefinition
+                {
+                    Name = "HomeTeamNameTextBlock",
+                    BindingProperty = "HomeTeamName",
+                    FontSize = 36,
+                    HorizontalAlignment = "Center",
+                    VerticalAlignment = "Center",
+                    PanelName = "HomeStatsPanel",
+                    Row = 0,
+                    Col = 0,
+                    BackgroundColor = "#FF000000",
+                    FontWeight = "Bold",
+                    RowSpan = 1,
+                    ColSpan = 6,
+                    ValueForegroundColor = "#FFFFFFFF",
+                    LabelForegroundColor = "#FF008000",
+                    TextAlignment = "Center",
+                    DefaultText = "HOME TEAM",
+                    LabelOrientation = "Horizontal"
+                },
+                new TextBlockDefinition
+                {
+                    Name = "GuestTeamNameTextBlock",
+                    BindingProperty = "GuestTeamName",
+                    FontSize = 36,
+                    HorizontalAlignment = "Center",
+                    VerticalAlignment = "Center",
+                    PanelName = "GuestStatsPanel",
+                    Row = 0,
+                    Col = 0,
+                    BackgroundColor = "#FF000000",
+                    FontWeight = "Bold",
+                    RowSpan = 1,
+                    ColSpan = 6,
+                    ValueForegroundColor = "#FFFFFFFF",
+                    LabelForegroundColor = "#FF008000",
+                    TextAlignment = "Center",
+                    DefaultText = "GUEST TEAM",
+                    LabelOrientation = "Horizontal"
+                },
+                new TextBlockDefinition
+                {
+                    Name = "HomeScoreTextBlock",
+                    BindingProperty = "HomeScore",
+                    FontSize = 48,
+                    HorizontalAlignment = "Center",
+                    VerticalAlignment = "Center",
+                    PanelName = "HomeStatsPanel",
+                    Row = 1,
+                    Col = 0,
+                    BackgroundColor = "#FF000000",
+                    FontWeight = "Bold",
+                    RowSpan = 1,
+                    ColSpan = 6,
+                    ValueForegroundColor = "#FF0000",
+                    LabelForegroundColor = "#FF008000",
+                    TextAlignment = "Center",
+                    DefaultText = "0",
+                    LabelOrientation = "Horizontal"
+                },
+                new TextBlockDefinition
+                {
+                    Name = "GuestScoreTextBlock",
+                    BindingProperty = "GuestScore",
+                    FontSize = 48,
+                    HorizontalAlignment = "Center",
+                    VerticalAlignment = "Center",
+                    PanelName = "GuestStatsPanel",
+                    Row = 1,
+                    Col = 0,
+                    BackgroundColor = "#FF000000",
+                    FontWeight = "Bold",
+                    RowSpan = 1,
+                    ColSpan = 6,
+                    ValueForegroundColor = "#FF0000",
+                    LabelForegroundColor = "#FF008000",
+                    TextAlignment = "Center",
+                    DefaultText = "0",
+                    LabelOrientation = "Horizontal"
+                },
             };
         }
 

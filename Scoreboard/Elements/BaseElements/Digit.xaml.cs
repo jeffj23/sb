@@ -6,7 +6,7 @@ using Scoreboard.Templates.DigitSets;
 
 namespace Scoreboard.Elements.BaseElements
 {
-    public partial class Digit : UserControl
+    public partial class Digit : UserControl, IDigit
     {
         // 7 rows, 4 columns
         private const int Rows = 7;
