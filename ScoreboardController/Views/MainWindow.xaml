@@ -4,7 +4,7 @@
         xmlns:views="clr-namespace:ScoreboardController.Views"
         Title="Scoreboard Controller"
         WindowState="Maximized"
-        WindowStyle="None"
+        WindowStyle="SingleBorderWindow"
         Background="#333">
 
     <Window.Resources>
@@ -70,6 +70,7 @@
                BasedOn="{StaticResource BaseButtonStyle}">
             <Setter Property="FontSize" Value="18"/>
             <Setter Property="BorderThickness" Value="4"/>
+            <EventSetter Event="Click" Handler="SoftKey_Click"></EventSetter>
             <Setter Property="BorderBrush" Value="White"/>
         </Style>
 
@@ -130,7 +131,7 @@
             <Setter Property="Height" Value="100"/>
             <Setter Property="Margin" Value="5"/>
             <Setter Property="FontSize" Value="20"/>
-            <Setter Property="Background" Value="#447BD4"/>
+            <Setter Property="Background" Value="#020C5A"/>
             <!-- normal blue -->
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="BorderThickness" Value="4"/>
@@ -419,7 +420,8 @@
                 <!-- Spacer -->
                 <ColumnDefinition Width="40" />
 
-                <!-- 3 columns for numpad -->
+                <!-- 4 columns for numpad -->
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
@@ -450,10 +452,14 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Button Content="{Binding Content}"
+                        <Button Content="{Binding Text}"
                                 Style="{StaticResource SoftKeyButtonStyle}"
                                 Command="{Binding Command}"
-                                CommandParameter="{Binding Tag}" />
+                                CommandParameter="{Binding Tag}" 
+                                Background="{Binding BackgroundColor}" 
+                                Foreground="{Binding TextColor}"
+                                Visibility="{Binding Visibility}"
+                                Tag="{Binding Tag}"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -462,55 +468,59 @@
                  i.e. col=11 => Clear, col=12 => 0, col=13 => Enter 
             -->
             <!-- Row 0: 7,8,9 -->
-            <Button Grid.Row="0" Grid.Column="11" Content="7" Style="{StaticResource NumpadButtonStyle}" Tag="Key7" Click="NumPad_Click"/>
-            <Button Grid.Row="0" Grid.Column="12" Content="8" Style="{StaticResource NumpadButtonStyle}" Tag="Key8" Click="NumPad_Click"/>
-            <Button Grid.Row="0" Grid.Column="13" Content="9" Style="{StaticResource NumpadButtonStyle}" Tag="Key9" Click="NumPad_Click"/>
+            <Button Grid.Row="0" Grid.Column="11" Content="Set" Style="{StaticResource UniversalButtonStyle}" Tag="Key7" Click="NumPad_Click" Background="#4A6FAE"/>
+            <Button Grid.Row="0" Grid.Column="12" Content="7" Style="{StaticResource NumpadButtonStyle}" Tag="Key7" Click="NumPad_Click"/>
+            <Button Grid.Row="0" Grid.Column="13" Content="8" Style="{StaticResource NumpadButtonStyle}" Tag="Key8" Click="NumPad_Click"/>
+            <Button Grid.Row="0" Grid.Column="14" Content="9" Style="{StaticResource NumpadButtonStyle}" Tag="Key9" Click="NumPad_Click"/>
 
             <!-- Row 1: 4,5,6 -->
-            <Button Grid.Row="1" Grid.Column="11" Content="4" Style="{StaticResource NumpadButtonStyle}" Tag="Key4" Click="NumPad_Click"/>
-            <Button Grid.Row="1" Grid.Column="12" Content="5" Style="{StaticResource NumpadButtonStyle}" Tag="Key5" Click="NumPad_Click"/>
-            <Button Grid.Row="1" Grid.Column="13" Content="6" Style="{StaticResource NumpadButtonStyle}" Tag="Key6" Click="NumPad_Click"/>
+            <Button Grid.Row="1" Grid.Column="11" Content="Blank" Style="{StaticResource UniversalButtonStyle}" Tag="Key7" Click="NumPad_Click" Background="#4A6FAE"/>
+            <Button Grid.Row="1" Grid.Column="12" Content="4" Style="{StaticResource NumpadButtonStyle}" Tag="Key4" Click="NumPad_Click"/>
+            <Button Grid.Row="1" Grid.Column="13" Content="5" Style="{StaticResource NumpadButtonStyle}" Tag="Key5" Click="NumPad_Click"/>
+            <Button Grid.Row="1" Grid.Column="14" Content="6" Style="{StaticResource NumpadButtonStyle}" Tag="Key6" Click="NumPad_Click"/>
 
             <!-- Row 2: 1,2,3 -->
-            <Button Grid.Row="2" Grid.Column="11" Content="1" Style="{StaticResource NumpadButtonStyle}" Tag="Key1" Click="NumPad_Click"/>
-            <Button Grid.Row="2" Grid.Column="12" Content="2" Style="{StaticResource NumpadButtonStyle}" Tag="Key2" Click="NumPad_Click"/>
-            <Button Grid.Row="2" Grid.Column="13" Content="3" Style="{StaticResource NumpadButtonStyle}" Tag="Key3" Click="NumPad_Click"/>
+            <Button Grid.Row="2" Grid.Column="11" Content="Menu" Style="{StaticResource UniversalButtonStyle}" Tag="Key7" Click="NumPad_Click" Background="#4A6FAE"/>
+            <Button Grid.Row="2" Grid.Column="12" Content="1" Style="{StaticResource NumpadButtonStyle}" Tag="Key1" Click="NumPad_Click"/>
+            <Button Grid.Row="2" Grid.Column="13" Content="2" Style="{StaticResource NumpadButtonStyle}" Tag="Key2" Click="NumPad_Click"/>
+            <Button Grid.Row="2" Grid.Column="14" Content="3" Style="{StaticResource NumpadButtonStyle}" Tag="Key3" Click="NumPad_Click"/>
 
             <!-- Row 3: Clear, 0, Enter -->
-            <Button Grid.Row="3" Grid.Column="11" Content="Clear" 
+            <Button Grid.Row="3" Grid.Column="11" Content="⌫" FontSize="36" Style="{StaticResource UniversalButtonStyle}" Tag="Key7" Click="NumPad_Click" Background="#5A5A02" Foreground="White"/>
+            <Button Grid.Row="3" Grid.Column="12" Content="Clear" 
                     Style="{StaticResource NumpadButtonStyle}"
-                    Background="Red" Foreground="White" Tag="Clear"
+                    Background="#5A0202" Foreground="White" Tag="Clear"
                     Click="NumPad_Click" FontSize="24"/>
-            <Button Grid.Row="3" Grid.Column="12" Content="0" Tag="Key0"
+            <Button Grid.Row="3" Grid.Column="13" Content="0" Tag="Key0"
                     Style="{StaticResource NumpadButtonStyle}"
                     Click="NumPad_Click"/>
-            <Button Grid.Row="3" Grid.Column="13" Content="Enter" Tag="Enter"
+            <Button Grid.Row="3" Grid.Column="14" Content="Enter" Tag="Enter"
                     Style="{StaticResource NumpadButtonStyle}"
-                    Background="Green" Foreground="White"
+                    Background="#025A02" Foreground="White"
                     Click="NumPad_Click" FontSize="24"/>
 
             <!-- UNIVERSAL BUTTONS (blue, 80x80), in 2 columns, 4 rows total:
                  Left col = col=15 => row=0..3
                  Right col= col=16 => row=0..3
             -->
-            <Button Grid.Row="0" Grid.Column="15" Content="Set Time" Tag="SetTime" x:Name="SetTimeButton"
+            <Button Grid.Row="0" Grid.Column="16" Content="Set Time" Tag="SetTime" x:Name="SetTimeButton"
                     Style="{StaticResource UniversalButtonStyle}"
                     />
-            <Button Grid.Row="1" Grid.Column="15" Content="Period" Tag="Period" x:Name="SetPeriodButton"
+            <Button Grid.Row="1" Grid.Column="16" Content="Period" Tag="Period" x:Name="SetPeriodButton"
                     Style="{StaticResource UniversalButtonStyle}"
                     />
-            <Button Grid.Row="0" Grid.Column="16" Content="Set Default" x:Name="SetDefaultTimeButton" Tag="SetDefaultTime"
+            <Button Grid.Row="0" Grid.Column="17" Content="Set Default" x:Name="SetDefaultTimeButton" Tag="SetDefaultTime"
                     Style="{StaticResource UniversalButtonStyle}" FontSize="18" />
-            <Button Grid.Row="1" Grid.Column="16" Content="Reset Time" x:Name="ResetTimeButton" Tag="ResetTime"
+            <Button Grid.Row="1" Grid.Column="17" Content="Reset Time" x:Name="ResetTimeButton" Tag="ResetTime"
                     Style="{StaticResource UniversalButtonStyle}" />
 
             <!-- Time In (green), Time Out (red) in col=16, row=0,1 -->
-            <Button Grid.Row="3" Grid.Column="15" Content="Time In" x:Name="TimeInButton" Tag="TimeIn"
+            <Button Grid.Row="3" Grid.Column="16" Content="Time In" x:Name="TimeInButton" Tag="TimeIn"
                     Style="{StaticResource UniversalButtonStyle}"
-                    Background="Green" Foreground="White" HorizontalAlignment="Left" Grid.ColumnSpan="2" Margin="0,0,0,0" Width="210"/>
-            <Button Grid.Row="2" Grid.Column="15" Content="Time Out" x:Name="TimeOutButton" Tag="TimeOut"
+                    Background="#025A02" Foreground="White" HorizontalAlignment="Left" Grid.ColumnSpan="2" Margin="0,0,0,0" Width="210"/>
+            <Button Grid.Row="2" Grid.Column="16" Content="Time Out" x:Name="TimeOutButton" Tag="TimeOut"
                     Style="{StaticResource UniversalButtonStyle}"
-                    Background="Red" Foreground="White" HorizontalAlignment="Left" Grid.ColumnSpan="2"  Width="210" Margin="0,0,0,0"/>
+                    Background="#5A0202" Foreground="White" HorizontalAlignment="Left" Grid.ColumnSpan="2"  Width="210" Margin="0,0,0,0"/>
             <!-- row=2..3 in col=16 can remain empty for future controls -->
 
         </Grid>
@@ -530,14 +540,10 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <Button Grid.Row="0" Grid.Column="1" Content="Menu" Style="{StaticResource UniversalButtonStyle}" Tag="Key3" Click="NumPad_Click"/>
-            <Button Grid.Row="0" Grid.Column="2" Content="Set" Style="{StaticResource UniversalButtonStyle}" Tag="Key3" Click="NumPad_Click"/>
-            <Button Grid.Row="0" Grid.Column="3" Content="Blank" Style="{StaticResource UniversalButtonStyle}" Tag="Key3" Click="NumPad_Click"/>
-            <Button Grid.Row="0" Grid.Column="4" Content="Bksp" Style="{StaticResource UniversalButtonStyle}" Tag="Key3" Click="NumPad_Click" Background="#FFD6D605" Foreground="Black"/>
-            <Button Grid.Row="0" Grid.Column="5" Content="New Game" Style="{StaticResource UniversalButtonStyle}" Tag="Key3" Click="NumPad_Click" Background="Red"/>
-            <Button Grid.Row="0" Grid.Column="6" Content="Horn" Style="{StaticResource UniversalButtonStyle}" Background="#FFD6D605" Foreground="Black" Tag="Key3" Click="NumPad_Click"/>
-            <Button Grid.Row="0" Grid.Column="7" Content="Auto Horn" Style="{StaticResource UniversalButtonStyle}" Tag="Key3" Click="NumPad_Click"/>
-            <Button Grid.Row="0" Grid.Column="8" Content="Power" Style="{StaticResource UniversalButtonStyle}" Tag="Key3" Click="NumPad_Click"/>
+            <Button Grid.Row="0" Grid.Column="1" Content="New Game" Style="{StaticResource UniversalButtonStyle}" Tag="Key3" Click="NumPad_Click" Background="#FF5A0202"/>
+            <Button Grid.Row="0" Grid.Column="2" Content="Horn" Style="{StaticResource UniversalButtonStyle}" Background="#FF5A5A02" Foreground="White" Tag="Key3" Click="NumPad_Click"/>
+            <Button Grid.Row="0" Grid.Column="3" Content="Count Up" Style="{StaticResource UniversalButtonStyle}" Tag="Key3" Click="NumPad_Click"/>
+            <Button Grid.Row="0" Grid.Column="4" Content="Count Down" Style="{StaticResource UniversalButtonStyle}" Tag="Key3" Click="NumPad_Click"/>
         </Grid>
     </Grid>
 </Window>

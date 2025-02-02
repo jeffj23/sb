@@ -12,6 +12,6 @@ namespace ScoreboardController.Services
         /// </summary>
         /// <param name="actionName">The identifier for the action.</param>
         /// <returns>The corresponding ActionCommandMapping.</returns>
-        ActionCommandMapping GetMapping(string actionName);
+        ActionCommandMapping GetMapping(string actionName, bool refresh);
     }
 }

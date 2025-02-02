@@ -13,6 +13,8 @@ using ScoreboardController.Models;
 using ScoreboardController.Services;
 using ScoreboardController.Views;
 using System.Collections.ObjectModel;
+using ScoreboardController.Data;
+using ScoreboardController.Repositories;
 
 namespace ScoreboardController.ViewModels
 {
@@ -27,10 +29,10 @@ namespace ScoreboardController.ViewModels
         private PromptService _promptService;
         private Dictionary<string, IScoreboardElementController> _controllers
             = new Dictionary<string, IScoreboardElementController>();
-        private readonly ISoftKeyRepository _softKeyRepository;
+        private readonly ISoftKeyService _softKeyService;
 
-        private ObservableCollection<SoftKeyDefinition> _softKeys;
-        public ObservableCollection<SoftKeyDefinition> SoftKeys
+        private ObservableCollection<SoftKey> _softKeys;
+        public ObservableCollection<SoftKey> SoftKeys
         {
             get => _softKeys;
             set
@@ -40,15 +42,18 @@ namespace ScoreboardController.ViewModels
             }
         }
 
-        public MainViewModel(TupleConverter converter, ICommandMappingService commandMappingService, ISoftKeyRepository softKeyRepository)
+        public MainViewModel(TupleConverter converter, ICommandMappingService commandMappingService, ISoftKeyService softKeyService)
         {
             CommandButtonClick = new RelayCommand(HandleCommandButtonClick);
             _converter = converter;
             _commandMappingService = commandMappingService;
             _controllers = new Dictionary<string, IScoreboardElementController>();
-            _softKeyRepository = softKeyRepository;
+            _softKeyService = softKeyService;
 
-            SoftKeys = new ObservableCollection<SoftKeyDefinition>(_softKeyRepository.GetSoftKeys());
+            _softKeyService.LoadSoftKeysForSet(1);
+            SoftKeys = _softKeyService.SoftKeys;
+            
+
             Console.WriteLine($"Loaded {SoftKeys.Count} softkeys.");
             InitializeSoftKeys();
         }
@@ -76,27 +81,7 @@ namespace ScoreboardController.ViewModels
 
         private void InitializeSoftKeys()
         {
-            // Populate softkey definitions
-            SoftKeys = new ObservableCollection<SoftKeyDefinition>();
-
-            for (int i = 0; i < 40; i++)
-            {
-                SoftKeys.Add(new SoftKeyDefinition
-                {
-                    Content = $"Key {(i <= 9 ? "0" : "")}{i + 1}",
-                    Tag = $"SoftKey{(i <= 9 ? "0" : "")}{i + 1}",
-                    Command = new RelayCommand(o => HandleSoftKeyClick(o))
-                });
-            }
-        }
-
-        private void HandleSoftKeyClick(object? parameter)
-        {
-            if (parameter is string tag)
-            {
-                // Example logic for softkey click handling
-                System.Diagnostics.Debug.WriteLine($"SoftKey clicked: {tag}");
-            }
+            //TODO: set up keys
         }
 
         public void HandleCommandButtonClick(object parameters)
@@ -114,7 +99,7 @@ namespace ScoreboardController.ViewModels
 
                     try
                     {
-                        var mapping = _commandMappingService.GetMapping(actionName);
+                        var mapping = _commandMappingService.GetMapping(actionName, false);
 
                         if (!mapping.PromptText.IsNullOrEmpty())
                         {
@@ -151,6 +136,26 @@ namespace ScoreboardController.ViewModels
                         MessageBox.Show($"Error executing command: {ex.Message}");
                     }
                 }
+            }
+        }
+
+        public void HandleSoftKeyClick(string key)
+        {
+            var softKey = SoftKeys.FirstOrDefault(s => s.Tag == key);
+            // if the softkey value is one character, add two spaces before it, if it's two characters, add one space before it.
+            // this will justify the letters properly
+            
+
+
+            var command = new ScoreboardCommand
+            {
+                ElementName = softKey.Element, 
+                CommandType = Enum.Parse<CommandType>(softKey.CommandType.PadLeft(3)),
+                Value = softKey.Value
+            };
+            if (_controllers.TryGetValue(softKey.Element, out var controller))
+            {
+                controller.ProcessCommand(command);
             }
         }
 
@@ -196,7 +201,87 @@ namespace ScoreboardController.ViewModels
                     TextAlignment = "Center",
                     DefaultText = "0",
                     LabelOrientation = "Horizontal"
-                }
+                },
+                new TextBlockDefinition
+                {
+                    Name = "HomeTeamNameTextBlock",
+                    BindingProperty = "HomeTeamName",
+                    FontSize = 36,
+                    HorizontalAlignment = "Center",
+                    VerticalAlignment = "Center",
+                    PanelName = "HomeStatsPanel",
+                    Row = 0,
+                    Col = 0,
+                    BackgroundColor = "#FF000000",
+                    FontWeight = "Bold",
+                    RowSpan = 1,
+                    ColSpan = 6,
+                    ValueForegroundColor = "#FFFFFFFF",
+                    LabelForegroundColor = "#FF008000",
+                    TextAlignment = "Center",
+                    DefaultText = "HOME TEAM",
+                    LabelOrientation = "Horizontal"
+                },
+                new TextBlockDefinition
+                {
+                    Name = "GuestTeamNameTextBlock",
+                    BindingProperty = "GuestTeamName",
+                    FontSize = 36,
+                    HorizontalAlignment = "Center",
+                    VerticalAlignment = "Center",
+                    PanelName = "GuestStatsPanel",
+                    Row = 0,
+                    Col = 0,
+                    BackgroundColor = "#FF000000",
+                    FontWeight = "Bold",
+                    RowSpan = 1,
+                    ColSpan = 6,
+                    ValueForegroundColor = "#FFFFFFFF",
+                    LabelForegroundColor = "#FF008000",
+                    TextAlignment = "Center",
+                    DefaultText = "GUEST TEAM",
+                    LabelOrientation = "Horizontal"
+                },
+                new TextBlockDefinition
+                {
+                    Name = "HomeScoreTextBlock",
+                    BindingProperty = "HomeScore",
+                    FontSize = 48,
+                    HorizontalAlignment = "Center",
+                    VerticalAlignment = "Center",
+                    PanelName = "HomeStatsPanel",
+                    Row = 1,
+                    Col = 0,
+                    BackgroundColor = "#FF000000",
+                    FontWeight = "Bold",
+                    RowSpan = 1,
+                    ColSpan = 6,
+                    ValueForegroundColor = "#FF0000",
+                    LabelForegroundColor = "#FF008000",
+                    TextAlignment = "Center",
+                    DefaultText = "0",
+                    LabelOrientation = "Horizontal"
+                },
+                new TextBlockDefinition
+                {
+                    Name = "GuestScoreTextBlock",
+                    BindingProperty = "GuestScore",
+                    FontSize = 48,
+                    HorizontalAlignment = "Center",
+                    VerticalAlignment = "Center",
+                    PanelName = "GuestStatsPanel",
+                    Row = 1,
+                    Col = 0,
+                    BackgroundColor = "#FF000000",
+                    FontWeight = "Bold",
+                    RowSpan = 1,
+                    ColSpan = 6,
+                    ValueForegroundColor = "#FF0000",
+                    LabelForegroundColor = "#FF008000",
+                    TextAlignment = "Center",
+                    DefaultText = "0",
+                    LabelOrientation = "Horizontal"
+                },
             };
         }
 
@@ -224,43 +309,4 @@ namespace ScoreboardController.ViewModels
         }
 
     }
-
-
-
-
-
-    public interface ISoftKeyRepository
-    {
-        List<SoftKeyDefinition> GetSoftKeys();
-    }
-
-
-    public class MockSoftKeyRepository : ISoftKeyRepository
-    {
-        public List<SoftKeyDefinition> GetSoftKeys()
-        {
-            var softKeys = new List<SoftKeyDefinition>();
-
-            for (int i = 0; i < 40; i++)
-            {
-                softKeys.Add(new SoftKeyDefinition
-                {
-                    Content = $"SoftKey {i}",
-                    Tag = $"SoftKey{i}",
-                    Command = new RelayCommand(parameter => HandleSoftKeyClick(parameter))
-                });
-            }
-
-            return softKeys;
-        }
-
-        private void HandleSoftKeyClick(object? parameter)
-        {
-            if (parameter is string tag)
-            {
-                Console.WriteLine($"SoftKey clicked: {tag}");
-            }
-        }
-    }
-
 }

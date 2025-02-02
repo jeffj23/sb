@@ -5,6 +5,7 @@ using System.Windows;
 using Scoreboard.Data;
 using ScoreboardController.Data;
 using ScoreboardController.Helpers;
+using ScoreboardController.Repositories;
 using ScoreboardController.Views;
 using ScoreboardController.Services;
 using ScoreboardController.ViewModels;
@@ -23,7 +24,7 @@ namespace ScoreboardController
                     // 1) Register your DbContext (replace with your connection string)
                     services.AddDbContext<ScoreDbContext>(options =>
                     {
-                        options.UseSqlServer("Server=localhost;Database=Score;Trusted_Connection=True;");
+                        options.UseSqlServer("Server=localhost;Database=Score;Trusted_Connection=True;TrustServerCertificate=True");
                     });
 
                     // 2) Register services that load softkeys, handle JSON sending, etc.
@@ -34,11 +35,10 @@ namespace ScoreboardController
                     services.AddSingleton<TupleConverter>();
                     // 3) Register MainWindow
                     services.AddSingleton<MainWindow>();
-                    services.AddSingleton<ICommandMappingService, MockCommandMappingService>();
-                    services.AddSingleton<ISoftKeyRepository, MockSoftKeyRepository>();
+                    services.AddSingleton<ICommandMappingRepository, MockCommandMappingRepository>();
+                    services.AddSingleton<ICommandMappingService, CommandMappingService>();
+                    services.AddSingleton<ISoftKeyRepository, SoftKeyRepository>();
                     services.AddSingleton<ITimerService, PrecisionTimerService>();
-
-
                 })
                 .Build();
 

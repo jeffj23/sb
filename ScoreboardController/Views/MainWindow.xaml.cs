@@ -29,9 +29,7 @@ namespace ScoreboardController.Views
 
             _viewModel = viewModel;
             DataContext = _viewModel;
-            _commandMappingService = new MockCommandMappingService();
             
-            //InitializeSoftKeys();
             _messenger = messenger;
             _sharedTimerService = timerService;
             _promptService = new PromptService(InputPromptPanel, PromptTextBlock, UserInputTextBlock);
@@ -39,11 +37,8 @@ namespace ScoreboardController.Views
 
             _viewModel.SetPromptService(_promptService);
 
-            // 1) Load or stub scoreboard elements (Name, Type). 
-            //    e.g., from DB => ScoreboardElements table
             var elements = _viewModel.LoadScoreboardElements();
 
-            // 2) Create controllers via factory and store in _controllers
             foreach (var elem in elements)
             {
                 IScoreboardElementController controller = ScoreboardControllerFactory.CreateController(
@@ -54,8 +49,6 @@ namespace ScoreboardController.Views
 
                 controller.OnMessage += (json) =>
                 {
-                    // Log or send JSON out to scoreboard (via socket, etc.)
-                    // For demonstration, let's just debug-print:
                     System.Diagnostics.Debug.WriteLine($"SEND JSON => {json}");
                 };
 
@@ -114,8 +107,11 @@ namespace ScoreboardController.Views
         {
             if (sender is Button btn)
             {
-                var tag = btn.Tag?.ToString(); // e.g., "SoftKey01"
-                MessageBox.Show($"You pressed {tag}");
+                var tag = btn.Tag?.ToString();
+                if (tag is not null)
+                {
+                    _viewModel.HandleSoftKeyClick(tag);
+                }
             }
         }
 

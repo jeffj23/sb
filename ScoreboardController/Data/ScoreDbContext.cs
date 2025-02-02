@@ -9,8 +9,8 @@ namespace ScoreboardController.Data
         {
         }
 
-        // Replace with your actual table
-        public DbSet<SoftKeyModel> SoftKeys { get; set; }
+       
+        public DbSet<SoftKey> SoftKeys { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

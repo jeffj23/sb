@@ -1,13 +1,12 @@
 ﻿using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Scoreboard.Templates.DigitSets;
 
-namespace Scoreboard
+namespace Scoreboard.Elements.BaseElements
 {
-    public partial class Digit : UserControl
+    public partial class Digit : UserControl, IDigit
     {
         // 7 rows, 4 columns
         private const int Rows = 7;
@@ -17,6 +16,17 @@ namespace Scoreboard
 
         private int _value;
         private readonly Dictionary<int, int[,]> _activeDigitSet;
+
+        public double Width
+        {
+            get
+            {
+                // Total width is the sum of all bulbs and margins
+                double bulbSpacing = 2 * Cols * 2; // Margin * 2 (left + right) * number of columns
+                double bulbWidth = BulbSize * Cols; // Total bulb width
+                return bulbWidth + bulbSpacing; // Add bulbs + margins
+            }
+        }
 
         public Digit()
         {

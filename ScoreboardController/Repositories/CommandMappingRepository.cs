@@ -1,22 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using ScoreboardController.Commands;
-using ScoreboardController.Models;
 using ScoreboardController.Views.Data;
 
-namespace ScoreboardController.Services
+namespace ScoreboardController.Repositories
 {
-    /// <summary>
-    /// Mock implementation of ICommandMappingService for demonstration purposes.
-    /// </summary>
-    public class MockCommandMappingService : ICommandMappingService
+    public interface ICommandMappingRepository
     {
-        private readonly Dictionary<string, ActionCommandMapping> _mappings;
+        Dictionary<string, ActionCommandMapping> GetActionCommandMappings();
+    }
 
-        public MockCommandMappingService()
+    public class MockCommandMappingRepository : ICommandMappingRepository
+    {
+        public Dictionary<string, ActionCommandMapping> GetActionCommandMappings()
         {
-            // Initialize with mock data. Replace this with database loading in the future.
-            _mappings = new Dictionary<string, ActionCommandMapping>
+            return new Dictionary<string, ActionCommandMapping>
             {
                 {
                     "SetTime", new ActionCommandMapping
@@ -80,16 +81,7 @@ namespace ScoreboardController.Services
 
                 }
                 // Add more mappings as needed
-            };  
-        }
-
-        public ActionCommandMapping GetMapping(string actionName)
-        {
-            if (_mappings.TryGetValue(actionName, out var mapping))
-            {
-                return mapping;
-            }
-            throw new KeyNotFoundException($"No mapping found for action '{actionName}'.");
+            };
         }
     }
 }
